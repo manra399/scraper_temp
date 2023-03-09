@@ -1,0 +1,33 @@
+version: '3.8'
+
+# Defining the named volume
+volumes:
+    db:
+
+
+services:
+    db:
+        image: postgres:14.1-alpine
+        restart: always
+        env_file:
+            - .env
+        ports:
+            - '5432:5432'
+        volumes:
+            # Mounting the named volume
+            - ./postgres-data:/var/lib/postgresql/data
+            - ./database:/docker-entrypoint-initdb.d
+        networks:
+            - zoopla_network
+
+    python_app_zoopla_full:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        env_file:
+            - .env
+        networks:
+            - zoopla_network
+
+networks:
+  zoopla_network:
